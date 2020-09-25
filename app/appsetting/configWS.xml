@@ -1,0 +1,10 @@
+<config>
+    <item name="images_folder">app/load/image/</item>
+    <item name="catalog_folder">app/load/catalog/</item>
+    <item name="image_name">Image_{}_{}_{}_{}.jpg</item>
+    <item name="catalog_name">Catalog_{}_{}_{}_{}.dat</item>
+    <item name="seconds_delete">60</item>
+    <item name="url_skyserver">http://skyserver.sdss.org/dr15/SkyServerWS/ImgCutout/getjpeg?</item>
+    <item name="modelos_dir">app/lib/modelos</item>
+    <item name="file_Weight">galaxia_all_1.h5</item>
+</config>
