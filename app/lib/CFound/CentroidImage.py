@@ -44,7 +44,7 @@ class CentroidImage(object):
                     color = self.image[x][y]
                     CenterX = x
                     CenterY = y
-        return [CenterX,CenterY,color]   
+        return [CenterY,CenterX,color]   
             
     def outPutFileImage(self,image):
         out_file=self.outPutFile

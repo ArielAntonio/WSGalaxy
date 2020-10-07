@@ -22,8 +22,8 @@ class InferenceConfig(config.__class__):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
     DETECTION_MIN_CONFIDENCE = 0.5
-    IMAGE_MIN_DIM = 512 #2048
-    IMAGE_MAX_DIM = 512 #2048
+    IMAGE_MIN_DIM = 2048
+    IMAGE_MAX_DIM = 2048
 
 class DetectionGalaxy():
     ROOT_DIR=""

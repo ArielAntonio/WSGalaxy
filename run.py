@@ -39,20 +39,24 @@ def getGalaxy():
     _ra = request.args.get('ra')
     _dec = request.args.get('dec')
     _scale = request.args.get('scale')
-    _width = request.args.get('width')
-    _height = request.args.get('height')
+    _width = request.args.get('width') or 512
+    _height = request.args.get('height') or 512
     _server = request.args.get('server')
     _return = request.args.get('ret')
     if (_ra is None) or (_dec is None):
         return 'falta RA o DEC'
 
+    _dec = _dec.replace("+","")
+
     try:
-        #appSet = AppSetting()
+        appSet = AppSetting()
         IS = ImageServer(appSet.getConfig())
         MD = MaskGalaxy(appSet.getConfig())
+
         image = callWithNonNoneArgs(IS.getImage,Souce=_server,RA=_ra,DEC=_dec,SCALE=_scale,WIDTH=_width,HEIGHT=_height)
         CF = CentroidImage(image)
         r=MD.Detection(image,model)
+        
         gc.collect()
         PathImage = os.path.join(appSet.getRoot(),appSet.getElem('images_folder'))
         PathCatalog = os.path.join(appSet.getRoot(),appSet.getElem('catalog_folder'))
@@ -86,11 +90,8 @@ def getImage():
 
     try:
         appSet = AppSetting()
-
         IS = ImageServer(appSet.getConfig())
-
         image = callWithNonNoneArgs(IS.getImage,Souce=_server,RA=_ra,DEC=_dec,SCALE=_scale,WIDTH=_width,HEIGHT=_height)
-
         pathFile = os.path.join(os.path.abspath(appSet.getElem('images_folder')),_FileName)
         imsave(pathFile, image)
         return send_file(pathFile, mimetype='image/jpeg')

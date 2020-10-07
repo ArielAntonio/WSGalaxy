@@ -520,14 +520,15 @@ def display_results(image, boxes, masks, class_ids, class_names=['BG','S','E'], 
         """
 
         n_instances = boxes.shape[0]
-        colors = color_map() #random_colors(n_instances) #
+        #colors = color_map() #random_colors(n_instances) #
+        colors = random_colors(n_instances) #
         for k in range(n_instances):
-            color = colors[class_ids[k]].astype(np.int) #colors[k] #
+            color = random_colors2() #colors[k] #
             if show_bbox:
                 box = boxes[k]
-                cls = class_names[class_ids[k]-1]  # Skip the Background
+                cls = class_names[class_ids[k]]  # Skip the Background
                 score = scores[k]
-                cv2.rectangle(image, (box[1], box[0]), (box[3], box[2]), color.tolist(),1)
+                cv2.rectangle(image, (box[1], box[0]), (box[3], box[2]), color,1)
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(image, '{}: {:.3f}'.format(cls, score), (box[1], box[0]),
                             font, 0.4, (0, 255, 255), 1, cv2.LINE_AA)
@@ -547,7 +548,7 @@ def display_results(image, boxes, masks, class_ids, class_names=['BG','S','E'], 
 
         return None
 
-def color_map(N=256, normalized=False):
+def color_map(N=256, normalized=True):
     def bitget(byteval, idx):
         return ((byteval & (1 << idx)) != 0)
 
@@ -566,3 +567,17 @@ def color_map(N=256, normalized=False):
 
     cmap = cmap / 255 if normalized else cmap
     return cmap
+
+def random_colors2():
+    """
+    Generate random colors.
+    To get visually distinct colors, generate them in HSV space then
+    convert to RGB.
+    """
+    COLORS = [(0, 253, 110), 
+          (245, 253, 0),
+          (253, 0, 169),
+          (253, 0, 25),
+          (255, 229, 155),
+          (255, 255, 255)]
+    return random.choice(COLORS)

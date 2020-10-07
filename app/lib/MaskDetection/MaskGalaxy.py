@@ -61,11 +61,7 @@ class MaskGalaxy():
     
     def Detection(self,image, model1, test=False, ):
         self.image=image
-        try:
-            results = model1.detect([image], verbose=0)
-        except Exception as error:
-    	    return repr(error)
-
+        results = model1.detect([image], verbose=0)
         self.RES = results[0]
         return self.RES
     
