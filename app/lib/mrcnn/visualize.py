@@ -518,8 +518,8 @@ def display_results(image, boxes, masks, class_ids, class_names=['BG','S','E'], 
         img_name: If save_img is True, the name of the predict image
 
         """
-
         n_instances = boxes.shape[0]
+        
         #colors = color_map() #random_colors(n_instances) #
         colors = random_colors(n_instances) #
         for k in range(n_instances):
@@ -544,7 +544,7 @@ def display_results(image, boxes, masks, class_ids, class_names=['BG','S','E'], 
             plt.xticks([]), plt.yticks([])  # to hide tick values on X and Y axis
             plt.show()
         if save_img:
-            cv2.imwrite(os.path.join(save_dir, img_name), image)
+            cv2.imwrite(os.path.join(save_dir, img_name), cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
 
         return None
 

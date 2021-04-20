@@ -4,6 +4,8 @@ import uuid
 
 from flask import Flask, request, redirect, url_for, send_file, session
 import matplotlib.pyplot as plt
+from time import time
+
 
 from app import config
 from app.appsetting.AppSetting import AppSetting
@@ -19,6 +21,8 @@ from mrcnn import visualize
 app = Flask(__name__)
 #app.debug = True
 
+start_time = time()
+
 appSet = AppSetting(os.getcwd())
 
 MODEL_DIR = os.path.join(appSet.Config['modelos_dir'])
@@ -28,7 +32,8 @@ config = InferenceConfig()
 model = modellib.MaskRCNN(mode="inference",config=config,model_dir=MODEL_DIR)
 model.load_weights(WEIGHTS_PATH, by_name=True)
 model.keras_model._make_predict_function()
-
+preprocess_time = time() - start_time
+print("Pre-procesamiento: %0.10f segundos." % preprocess_time)
 
 @app.route("/")
 def hello():  
@@ -50,7 +55,14 @@ def getGalaxy():
 
     try:
         appSet = AppSetting()
+        #Get Image from  SDSS
+        start_time = time()
         IS = ImageServer(appSet.getConfig())
+        ImageServer_time = time() - start_time
+        print("ImageServer: %0.10f segundos." % ImageServer_time)
+        #********************
+        #Detecction
+        start_time = time()
         MD = MaskGalaxy(appSet.getConfig())
 
         image = callWithNonNoneArgs(IS.getImage,Souce=_server,RA=_ra,DEC=_dec,SCALE=_scale,WIDTH=_width,HEIGHT=_height)
@@ -67,12 +79,20 @@ def getGalaxy():
         if(_return=='image'):
             FileNameImage = getName(_ra,_dec,_server,appSet.getElem('image_name'))
             visualize.display_results(image, r['rois'], r['masks'], r['class_ids'], scores=r['scores'], show_mask=False,display_img=False,save_dir=PathImage,img_name=FileNameImage)
+            Detecction_time = time() - start_time
+            print("Deteccion: %0.10f segundos." % Detecction_time)
+            #********************
             return send_file(os.path.join(PathImage,FileNameImage), mimetype='image/jpeg')
         else:
+            #Catalogo
+            start_time = time()
             FileNameCatalog = getName(_ra,_dec,_server,appSet.getElem('catalog_name'))
             df = CF.find_ListCentroid(r)
             PathAndFile = os.path.join(PathCatalog,FileNameCatalog)
             CF.CreateCatalog(df,r, PathAndFile)
+            Detecction_time = time() - start_time
+            print("Catalogo: %0.10f segundos." % Detecction_time)
+            #********************
             return send_file(PathAndFile, mimetype='text/dat')
     except Exception as error:
     	return repr(error)    
